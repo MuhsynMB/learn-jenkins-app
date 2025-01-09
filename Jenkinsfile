@@ -1,33 +1,16 @@
 pipeline {
-    agent any
-
+    agent {
+        docker {
+            image 'docker:20.10.24'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
     stages {
         stage('Build') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
             steps {
-                sh '''
-                    ls -la
-                    node --version
-                    npm --version
-                    npm ci
-                    npm run build
-                    ls -la
-                '''
-            }
-        }
-
-        stage('Test') {
-           
-            steps {
-                echo 'Testing..'
+                sh 'docker pull node:18-alpine'
+                sh 'docker inspect -f . node:18-alpine'
             }
         }
     }
-
-
 }
